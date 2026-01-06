@@ -18,8 +18,13 @@ exports.createClientWorkflow = async (req, res) => {
 };
 
 exports.getReports = async (req, res) => {
-  const reports = getAdminReports();
-  res.json(reports);
+  try {
+    const reports = getAdminReports();
+    res.json(reports);
+  } catch (error) {
+    console.error('Error getting reports:', error);
+    res.status(500).json({ message: 'Error fetching reports', error: error.message });
+  }
 };
 
 exports.getAllUsers = async (req, res) => {
