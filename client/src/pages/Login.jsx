@@ -4,21 +4,37 @@ import { useNavigate } from 'react-router-dom';
 import { ShieldCheck } from 'lucide-react';
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('admin@webotixs.com');
+  const [password, setPassword] = useState('admin123');
   const [error, setError] = useState('');
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
     try {
       const user = await login(email, password);
       if (user.role === 'admin') navigate('/admin');
       else if (user.role === 'team') navigate('/team');
       else navigate('/client');
     } catch (err) {
-      setError('Invalid credentials');
+      const errorMessage = err.response?.data?.message || err.message || 'Invalid credentials';
+      setError(errorMessage);
+    }
+  };
+
+  const fillCredentials = (role) => {
+    setError('');
+    if (role === 'admin') {
+      setEmail('admin@webotixs.com');
+      setPassword('admin123');
+    } else if (role === 'team') {
+      setEmail('team@webotixs.com');
+      setPassword('team123');
+    } else if (role === 'client') {
+      setEmail('client@webotixs.com');
+      setPassword('client123');
     }
   };
 
@@ -66,10 +82,34 @@ const Login = () => {
           </button>
         </form>
         
-        <div className="mt-8 pt-6 border-t border-slate-100 grid grid-cols-3 gap-2 text-[10px] text-slate-400 uppercase tracking-widest text-center">
-            <div>Admin</div>
-            <div>Team</div>
-            <div>Client</div>
+        <div className="mt-8 pt-6 border-t border-slate-100">
+          <p className="text-xs text-slate-500 text-center mb-4">Quick Login (Click to fill credentials):</p>
+          <div className="grid grid-cols-3 gap-2">
+            <button
+              type="button"
+              onClick={() => fillCredentials('admin')}
+              className="px-3 py-2 text-xs font-medium text-slate-600 bg-slate-50 rounded-lg hover:bg-slate-100 transition-all border border-slate-200"
+            >
+              <div className="font-semibold text-indigo-600">Admin</div>
+              <div className="text-[10px] text-slate-400 mt-1">admin@webotixs.com</div>
+            </button>
+            <button
+              type="button"
+              onClick={() => fillCredentials('team')}
+              className="px-3 py-2 text-xs font-medium text-slate-600 bg-slate-50 rounded-lg hover:bg-slate-100 transition-all border border-slate-200"
+            >
+              <div className="font-semibold text-indigo-600">Team</div>
+              <div className="text-[10px] text-slate-400 mt-1">team@webotixs.com</div>
+            </button>
+            <button
+              type="button"
+              onClick={() => fillCredentials('client')}
+              className="px-3 py-2 text-xs font-medium text-slate-600 bg-slate-50 rounded-lg hover:bg-slate-100 transition-all border border-slate-200"
+            >
+              <div className="font-semibold text-indigo-600">Client</div>
+              <div className="text-[10px] text-slate-400 mt-1">client@webotixs.com</div>
+            </button>
+          </div>
         </div>
       </div>
     </div>

@@ -140,8 +140,14 @@ const createClientWithWorkflow = ({ name, email, password, projectName, deadline
   return project;
 };
 
-const findUserByEmailAndPassword = (email, password) =>
-  users.find((u) => u.email === email && u.password === password);
+const findUserByEmailAndPassword = (email, password) => {
+  if (!email || !password) return null;
+  const normalizedEmail = email.trim().toLowerCase();
+  const normalizedPassword = password.trim();
+  return users.find((u) => 
+    u.email.toLowerCase() === normalizedEmail && u.password === normalizedPassword
+  );
+};
 
 const findUserById = (id) => users.find((u) => u.id === id);
 

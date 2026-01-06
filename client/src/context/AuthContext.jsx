@@ -18,11 +18,29 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (email, password) => {
-    const { data } = await axios.post('/api/auth/login', { email, password });
-    localStorage.setItem('user', JSON.stringify(data));
-    axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
-    setUser(data);
-    return data;
+    try {
+      const { data } = await axios.post('/api/auth/login', { email, password });
+      if (data && data.email) {
+        localStorage.setItem('user', JSON.stringify(data));
+        axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
+        setUser(data);
+        return data;
+      } else {
+        throw new Error('Invalid response from server');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      if (error.response) {
+        // Server responded with error status
+        throw new Error(error.response.data?.message || 'Login failed');
+      } else if (error.request) {
+        // Request was made but no response received
+        throw new Error('Unable to connect to server. Please check your connection.');
+      } else {
+        // Something else happened
+        throw new Error(error.message || 'An unexpected error occurred');
+      }
+    }
   };
 
   const logout = () => {
