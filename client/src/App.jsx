@@ -3,6 +3,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Login from './pages/Login';
 import AdminDashboard from './pages/admin/AdminDashboard';
+import ReportsPage from './pages/admin/ReportsPage';
+import UsersPage from './pages/admin/UsersPage';
 import TeamDashboard from './pages/team/TeamDashboard';
 import ClientDashboard from './pages/client/ClientDashboard';
 import Sidebar from './components/Sidebar';
@@ -34,6 +36,16 @@ const App = () => {
           <Route path="/admin" element={
             <ProtectedRoute allowedRoles={['admin']}>
               <AdminDashboard />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/reports" element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <ReportsPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/users" element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <UsersPage />
             </ProtectedRoute>
           } />
           
