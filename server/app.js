@@ -20,5 +20,6 @@ app.use('/api/client', clientRoutes);
 
 // Health Check
 app.get('/', (req, res) => res.send('Webotixs API Running'));
+app.get('/api', (req, res) => res.send('Webotixs API Running'));
 
 module.exports = app;
