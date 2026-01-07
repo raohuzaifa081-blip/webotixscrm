@@ -210,6 +210,32 @@ const getTasksForTeamMember = (teamMemberId) =>
       projectName: projects.find((p) => p.id === task.projectId)?.name || 'Untitled Project'
     }));
 
+const getAllProjectsWithTasks = () => {
+  return projects.map((project) => {
+    const client = users.find((u) => u.id === project.clientId);
+    const projectTasks = tasks
+      .filter((task) => task.projectId === project.id)
+      .sort((a, b) => a.order - b.order)
+      .map((task) => {
+        const assignedUser = users.find((u) => u.id === task.assignedTo);
+        return {
+          ...task,
+          _id: task.id,
+          assignedToName: assignedUser?.name || 'Unassigned',
+          assignedToEmail: assignedUser?.email || '',
+          canUpdate: false // Will be set by controller based on logged-in user
+        };
+      });
+    
+    return {
+      ...project,
+      _id: project.id,
+      client: sanitizeUser(client),
+      tasks: projectTasks
+    };
+  });
+};
+
 const getTaskById = (id) => tasks.find((task) => task.id === id);
 
 const updateTaskStatus = (taskId, status) => {
@@ -233,6 +259,7 @@ module.exports = {
   getAllUsers,
   getClientProject,
   getTasksForTeamMember,
+  getAllProjectsWithTasks,
   getTaskById,
   updateTaskStatus
 };

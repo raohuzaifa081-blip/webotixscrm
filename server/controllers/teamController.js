@@ -1,5 +1,6 @@
 const {
   getTasksForTeamMember,
+  getAllProjectsWithTasks,
   updateTaskStatus,
   getTaskById
 } = require('../data');
@@ -7,6 +8,24 @@ const {
 exports.getMyTasks = async (req, res) => {
   const tasks = getTasksForTeamMember(req.user.id);
   res.json(tasks);
+};
+
+exports.getAllProjects = async (req, res) => {
+  try {
+    const projects = getAllProjectsWithTasks();
+    // Mark which tasks can be updated by this team member
+    const projectsWithPermissions = projects.map((project) => ({
+      ...project,
+      tasks: project.tasks.map((task) => ({
+        ...task,
+        canUpdate: task.assignedTo === req.user.id
+      }))
+    }));
+    res.json(projectsWithPermissions);
+  } catch (error) {
+    console.error('Error getting all projects:', error);
+    res.status(500).json({ message: 'Error fetching projects' });
+  }
 };
 
 exports.updateTaskStatus = async (req, res) => {
