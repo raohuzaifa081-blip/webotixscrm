@@ -4,17 +4,17 @@ const users = [
   {
     id: 'admin-1',
     _id: 'admin-1',
-    name: 'Aiden Cole',
-    email: 'admin@webotixs.com',
-    password: 'admin123',
+    name: 'Bilal',
+    email: 'Bilal@webotixs.com',
+    password: 'Bilal@5546',
     role: 'admin'
   },
   {
     id: 'team-1',
     _id: 'team-1',
-    name: 'Maya Patel',
-    email: 'team@webotixs.com',
-    password: 'team123',
+    name: 'Huzaifa',
+    email: 'huzaifa@webotixs.com',
+    password: 'Huzaifa@5546',
     role: 'team',
     specialization: 'Dev'
   },
