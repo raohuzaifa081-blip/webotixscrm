@@ -11,11 +11,21 @@ const TeamDashboard = () => {
     try {
       setLoading(true);
       setError('');
+      console.log('Fetching projects from /api/team/projects');
       const { data } = await axios.get('/api/team/projects');
-      setProjects(data);
+      console.log('Received projects data:', data);
+      console.log('Number of projects:', Array.isArray(data) ? data.length : 'Not an array');
+      
+      if (Array.isArray(data)) {
+        setProjects(data);
+      } else {
+        console.error('Invalid data format:', data);
+        setError('Invalid response format from server');
+      }
     } catch (err) {
       console.error('Error fetching projects:', err);
-      setError('Failed to load projects. Please try again.');
+      console.error('Error response:', err.response);
+      setError(err.response?.data?.message || 'Failed to load projects. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -67,10 +77,17 @@ const TeamDashboard = () => {
         <p className="text-slate-500">View all projects and tasks. You can update tasks assigned to you.</p>
       </div>
 
-      {projects.length === 0 ? (
+      {!projects || projects.length === 0 ? (
         <div className="py-20 text-center bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
           <Folder className="mx-auto mb-3 text-slate-300" size={48} />
-          <p className="text-slate-400">No projects found.</p>
+          <p className="text-slate-400 mb-2">No projects found.</p>
+          <p className="text-xs text-slate-400">Projects will appear here once clients are onboarded.</p>
+          <button 
+            onClick={fetchProjects}
+            className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm"
+          >
+            Refresh
+          </button>
         </div>
       ) : (
         <div className="space-y-8">
@@ -119,10 +136,10 @@ const TeamDashboard = () => {
               {/* Tasks Grid */}
               <div className="p-6">
                 <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">
-                  Tasks ({project.tasks.length})
+                  Tasks ({project.tasks?.length || 0})
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {project.tasks.map((task) => (
+                  {project.tasks && project.tasks.length > 0 ? project.tasks.map((task) => (
                     <div 
                       key={task._id} 
                       className={`p-4 rounded-lg border-2 transition-all ${
@@ -171,13 +188,12 @@ const TeamDashboard = () => {
                         </div>
                       )}
                     </div>
-                  ))}
+                  )) : (
+                    <div className="col-span-full text-center py-8 text-slate-400 text-sm">
+                      No tasks for this project yet.
+                    </div>
+                  )}
                 </div>
-                {project.tasks.length === 0 && (
-                  <div className="text-center py-8 text-slate-400 text-sm">
-                    No tasks for this project yet.
-                  </div>
-                )}
               </div>
             </div>
           ))}

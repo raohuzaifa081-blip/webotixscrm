@@ -211,11 +211,15 @@ const getTasksForTeamMember = (teamMemberId) =>
     }));
 
 const getAllProjectsWithTasks = () => {
+  if (!projects || projects.length === 0) {
+    return [];
+  }
+  
   return projects.map((project) => {
     const client = users.find((u) => u.id === project.clientId);
     const projectTasks = tasks
       .filter((task) => task.projectId === project.id)
-      .sort((a, b) => a.order - b.order)
+      .sort((a, b) => (a.order || 0) - (b.order || 0))
       .map((task) => {
         const assignedUser = users.find((u) => u.id === task.assignedTo);
         return {
@@ -231,7 +235,7 @@ const getAllProjectsWithTasks = () => {
       ...project,
       _id: project.id,
       client: sanitizeUser(client),
-      tasks: projectTasks
+      tasks: projectTasks || []
     };
   });
 };

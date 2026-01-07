@@ -12,7 +12,10 @@ exports.getMyTasks = async (req, res) => {
 
 exports.getAllProjects = async (req, res) => {
   try {
+    console.log('Getting all projects for user:', req.user.id);
     const projects = getAllProjectsWithTasks();
+    console.log('Found projects:', projects.length);
+    
     // Mark which tasks can be updated by this team member
     const projectsWithPermissions = projects.map((project) => ({
       ...project,
@@ -21,10 +24,12 @@ exports.getAllProjects = async (req, res) => {
         canUpdate: task.assignedTo === req.user.id
       }))
     }));
+    
+    console.log('Returning projects with permissions');
     res.json(projectsWithPermissions);
   } catch (error) {
     console.error('Error getting all projects:', error);
-    res.status(500).json({ message: 'Error fetching projects' });
+    res.status(500).json({ message: 'Error fetching projects', error: error.message });
   }
 };
 
